@@ -23,6 +23,7 @@ const uploadImageToCloudinary = async (req, res, next) => {
 const uploadVideoToCloudinary = async (req, res, next) => {
     try {
         const video = await cloudinary.uploader.upload(req.files.videos[0].path, { resource_type: 'video' });
+        console.log(video);
         req.url = video.url
         next();
     } catch (error) {
