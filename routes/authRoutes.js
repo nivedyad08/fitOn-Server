@@ -2,6 +2,8 @@ const express = require("express");
 const authRoute = express();
 const authController = require("../controllers/authController");
 const userImageUpload = require("../config/multer").userImageUpload;
+const { cloudinary } = require("../utils/cloudinary")
+const uploadImageToCloudinary = require("../utils/uploadToCloudinary").uploadImageToCloudinary
 const userUpload = userImageUpload.fields([
     { name: "profilePic", maxCount: 1 },
     { name: "coverPhoto", maxCount: 1 },
@@ -9,7 +11,7 @@ const userUpload = userImageUpload.fields([
 
 authRoute.post("/user/register", authController.register);
 authRoute.post("/user/validate-otp", authController.validateOtp);
-authRoute.post("/user/profile-complete", userUpload,
+authRoute.post("/user/profile-complete", userUpload, uploadImageToCloudinary,
     authController.profileComplete);
 authRoute.post("/user/payment-update/:userId",
     authController.paymentUpdate);

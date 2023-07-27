@@ -5,11 +5,12 @@ const uploadImageToCloudinary = async (req, res, next) => {
         if (req.file) {
             const image = await cloudinary.uploader.upload(req.file.path);
             req.imageUrl = image.url;
-        } else if (req.files && req.files.coverPhoto) {
+        }
+        if (req.files && req.files.coverPhoto) {
             const coverPhoto = await cloudinary.uploader.upload(req.files.coverPhoto[0].path);
             req.coverPhoto = coverPhoto.url;
         }
-        else if (req.files && req.files.profilePic) {
+        if (req.files && req.files.profilePic) {
             const profilePic = await cloudinary.uploader.upload(req.files.profilePic[0].path);
             req.profilePic = profilePic.url;
         }

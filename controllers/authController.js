@@ -53,16 +53,13 @@ const register = async (req, res) => {
 const profileComplete = async (req, res) => {
   try {
     let { userBio, userId } = req.body
-    let { profilePic, coverPhoto } = req.files
-    if (profilePic && coverPhoto && userBio) {
-      const profileImage = profilePic[0].filename;
-      const coverImage = coverPhoto[0].filename;
+    if (req.coverPhoto && req.profilePic && userBio) {
       if (!userId) {
         return res.status(400).json({ message: "Invalid user" });
       }
       const user = await User.findOne({ _id: userId })
       const updateProfileUpdate = await User.findOneAndUpdate({ _id: userId },
-        { $set: { profilePic: profileImage, coverPhoto: coverImage, userBio, isActive: true } }, { new: true })
+        { $set: { profilePic: req.profilePic, coverPhoto: req.coverPhoto, userBio, isActive: true } }, { new: true })
       if (!updateProfileUpdate) {
         return res.status(400).json({ message: "User not found !!" });
       }
@@ -79,6 +76,7 @@ const profileComplete = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
+
 
 const paymentUpdate = async (req, res) => {
   try {
