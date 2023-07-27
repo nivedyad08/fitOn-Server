@@ -33,7 +33,7 @@ const trainerRoute = require("./routes/trainer/trainerRoutes");
 const userRoute = require("./routes/user/userRoutes");
 const chatRoute = require("./routes/chats/chatRoute");
 
-const server = app.listen(8080, () => {
+const server = app.listen(3000, () => {
   console.log(`Server is running on port 8080.`);
 });
 
