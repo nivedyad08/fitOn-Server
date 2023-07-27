@@ -193,7 +193,7 @@ const forgotPassword = async (req, res) => {
       if (!user) {
         return res.status(400).json({ message: "User not Found" });
       }
-      const message = `<p>Hi ${ user.firstName } ${ user.lastName }, please click <a href=${ process.env.APP_URL }/updatePassword?email=${ user.email }>here</a> to create a new password.</p>`
+      const message = `<p>Hi ${ user.firstName } ${ user.lastName }, please click <a href=${ process.env.APP_URL }updatePassword?email=${ user.email }>here</a> to create a new password.</p>`
       const subject = "Forgot Password";
       sendEmailVerification(user.firstName, user.lastName, email, message, subject)
       return res.status(200).json({ message: "Email sent successfully !!" });
