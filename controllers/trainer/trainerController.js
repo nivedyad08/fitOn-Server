@@ -56,6 +56,7 @@ const changePassword = async (req, res) => {
 const dashboardDetails = async (req, res) => {
     try {
         const { trainerId } = req.query
+        let totalFavourites = 0;
         const totalWorkouts = await Workout.find({ trainerId, status: true }).count()
 
         const totalFavs = await Workout.aggregate([
@@ -69,7 +70,9 @@ const dashboardDetails = async (req, res) => {
                 }
             }
         ]);
-        const totalFavourites = totalFavs[0].totalFavouritesSum
+        if (totalFavs[0].totalFavouritesSum) {
+            totalFavourites = totalFavs[0].totalFavouritesSum
+        }
 
         const totalSubscribers = await User.find({
             role: USER_ROLE,
