@@ -70,8 +70,8 @@ const dashboardDetails = async (req, res) => {
                 }
             }
         ]);
-        if (totalFavs[0].totalFavouritesSum) {
-            totalFavourites = totalFavs[0].totalFavouritesSum
+        if (totalFavs.length > 0 && totalFavs[0].totalFavouritesSum !== null) {
+            totalFavourites = totalFavs[0].totalFavouritesSum;
         }
 
         const totalSubscribers = await User.find({
