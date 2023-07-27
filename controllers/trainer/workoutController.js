@@ -14,7 +14,7 @@ const addWorkout = async (req, res) => {
     try {
         const { workoutTitle, description, category, difficultyLevel } = req.body
         const { trainerId } = req.query
-        const thumbnailImage = req.url
+        const thumbnailImage = req.imageUrl
         if (!trainerId && !workoutTitle && !description && !category && !difficultyLevel && !thumbnailImage)
             return res.status(400).json({ message: "All fields are required !!" });
         const newWorkout = Workout({
@@ -38,14 +38,19 @@ const addWorkout = async (req, res) => {
 const uploadWorkoutVideo = async (req, res) => {
     try {
         const { workoutId } = req.query
-        const videos = req.url
-        console.log(workoutId);
-        if (!workoutId && !videos)
+        if (!workoutId)
             return res.status(400).json({ message: "Something went wrong" });
+        const workoutDetails = await Workout.findById(workoutId);
+        let videos
+        if (req.url) {
+            videos = req.url
+        } else {
+            videos = workoutDetails.video
+        }
         const uploadVideo = await Workout.findByIdAndUpdate(workoutId, { video: videos })
         if (!uploadVideo)
             return res.status(400).json({ message: "Video not uploaded! Something went wrong" });
-        return res.status(200).json({ message: "Video Uploaded" });
+        return res.status(200).json({ message: "Video Uploaded", workout: uploadVideo });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
@@ -76,7 +81,7 @@ const workouts = async (req, res) => {
                     from: "categories",
                     localField: "category",
                     foreignField: "_id",
-                    as: "category",
+                    as: "categoryInfo",
                 },
             },
             {
@@ -114,30 +119,26 @@ const editWorkout = async (req, res) => {
     try {
         const { workoutTitle, description, category, difficultyLevel } = req.body;
         const { workoutId } = req.query;
-        console.log(req.body);
         if (!workoutId)
             return res.status(400).json({ message: "Invalid Workout" });
         const workoutDetails = await Workout.findById(workoutId);
-        let thumbnailImage = workoutDetails.thumbnailImage
-        let video = workoutDetails.video
 
-        if (req.files && req.files.thumbnailImage) {
-            thumbnailImage = req.files.thumbnailImage[0].filename
+        let thumbnailImageUpdated;
+        if (req.imageUrl) {
+            thumbnailImageUpdated = req.imageUrl;
+        } else {
+            thumbnailImageUpdated = workoutDetails.thumbnailImage;
         }
-        if (req.files && req.files.video) {
-            video = req.files.video[0].filename
-        }
-        const updateResult = await Workout.findByIdAndUpdate(workoutId, {
-            workoutTitle,
-            description,
-            category,
-            difficultyLevel,
-            thumbnailImage,
-            video,
-        }, { new: true });
-        if (!updateResult)
-            return res.status(400).json({ message: "Workout not updated !!" });
-        return res.status(200).json({ message: "Workout updated successfully !!", workout: updateResult });
+        // Update other user details
+        workoutDetails.workoutTitle = workoutTitle;
+        workoutDetails.description = description;
+        workoutDetails.category = category;
+        workoutDetails.difficultyLevel = difficultyLevel;
+        workoutDetails.thumbnailImage = thumbnailImageUpdated
+
+        // Save the updated user details
+        const updateWorkout = await workoutDetails.save();
+        return res.status(200).json({ message: "Workout updated successfully !!", workout: updateWorkout });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
