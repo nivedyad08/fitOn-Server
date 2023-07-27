@@ -169,6 +169,8 @@ const allUsersChats = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         if (req.user) {
+            console.log(1111);
+            console.log(req.user);
             const { content, chatId } = req.body;
             if (!content || !chatId) {
                 console.log("Invalid data passed into request");
@@ -181,18 +183,21 @@ const sendMessage = async (req, res) => {
                 chat: chatId,
             };
             var message = await Message.create(newMessage);
-
+            console.log(2323232);
+            console.log(message);
             message = await message.populate("sender", "firstName profilePic")
             message = await message.populate("chat")
+            console.log("yyyyyyyyyy");
             message = await User.populate(message, {
                 path: "chat.users",
                 select: "firstName profilePic email",
             });
-
+            console.log("iiuuuuuuuu");
+            console.log("message");
             await Chats.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
-
+            console.log("aaaaaaaaaaaaaa");
             res.json(message);
-
+            
         }
     } catch (error) {
         console.error(error);
