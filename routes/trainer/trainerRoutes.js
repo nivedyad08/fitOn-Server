@@ -38,7 +38,7 @@ trainerRoute.post('/upload-basic-workout-video', isTrainer, workoutUpload.fields
     name: "basicVideo",
     maxCount: 1,
   },
-]), workoutController.uploadBasicWorkoutVideo);
+]), uploadVideoToCloudinary, workoutController.uploadBasicWorkoutVideo);
 
 trainerRoute.post('/edit-user-details', isTrainer, userUpload, uploadImageToCloudinary, trainerController.editUser);
 trainerRoute.post('/change/password', isTrainer, trainerController.changePassword);
