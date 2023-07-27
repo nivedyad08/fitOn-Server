@@ -171,17 +171,19 @@ const sendMessage = async (req, res) => {
         if (req.user) {
             console.log(1111);
             console.log(req.user);
+            console.log(req.body);
             const { content, chatId } = req.body;
             if (!content || !chatId) {
                 console.log("Invalid data passed into request");
                 return res.sendStatus(400);
             }
-
+            console.log(88777);
             var newMessage = {
                 sender: req.user,
                 content: content,
                 chat: chatId,
             };
+            console.log(newMessage);
             var message = await Message.create(newMessage);
             console.log(2323232);
             console.log(message);
@@ -197,7 +199,7 @@ const sendMessage = async (req, res) => {
             await Chats.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
             console.log("aaaaaaaaaaaaaa");
             res.json(message);
-            
+
         }
     } catch (error) {
         console.error(error);
