@@ -169,35 +169,28 @@ const allUsersChats = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         if (req.user) {
-            console.log(1111);
-            console.log(req.user);
-            console.log(req.body);
             const { content, chatId } = req.body;
             if (!content || !chatId) {
                 console.log("Invalid data passed into request");
                 return res.sendStatus(400);
             }
-            console.log(88777);
-            var newMessage = {
+
+            const newMessage = {
                 sender: req.user,
                 content: content,
                 chat: chatId,
             };
-            console.log(newMessage);
-            var message = await Message.create(newMessage);
-            console.log(2323232);
-            console.log(message);
+            const message = await Message.create(newMessage);
+
             message = await message.populate("sender", "firstName profilePic")
             message = await message.populate("chat")
-            console.log("yyyyyyyyyy");
             message = await User.populate(message, {
                 path: "chat.users",
                 select: "firstName profilePic email",
             });
-            console.log("iiuuuuuuuu");
-            console.log("message");
+
             await Chats.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
-            console.log("aaaaaaaaaaaaaa");
+
             res.json(message);
 
         }

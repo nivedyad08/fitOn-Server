@@ -11,7 +11,6 @@ const ObjectId = mongoose.Types.ObjectId
 
 const editUser = async (req, res) => {
     try {
-        console.log(889889);
         const { firstName, lastName, userBio, userLocation } = req.body;
         const { userId } = req.query;
         const userDetails = await User.findById(userId);
