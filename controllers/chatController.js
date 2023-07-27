@@ -180,7 +180,7 @@ const sendMessage = async (req, res) => {
                 content: content,
                 chat: chatId,
             };
-            const message = await Message.create(newMessage);
+            var message = await Message.create(newMessage);
 
             message = await message.populate("sender", "firstName profilePic")
             message = await message.populate("chat")
