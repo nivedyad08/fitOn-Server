@@ -249,7 +249,7 @@ const updatePassword = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     if (newPassword === confirmPassword) {
       const hashPassword = await bcrypt.hash(newPassword, 10)
-      const updatePassword = await User.updateOne({ email: email }, { $set: { newPassword: hashPassword } })
+      const updatePassword = await User.updateOne({ email: email }, { $set: { password: hashPassword } })
       res.status(200).json({ message: 'Password updated successfully !!!' })
     } else {
       res.status(400).json({ error: 'Password mismatch !!!' })
