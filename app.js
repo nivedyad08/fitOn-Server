@@ -39,9 +39,7 @@ const server = app.listen(3000, () => {
 
 const io = require('socket.io')(server, {
   pingTimeout: 60000,
-  cors: {
-    origin: "https://fitonhub.netlify.app"
-  }
+  cors: true
 })
 
 io.on("connection", (socket) => {
@@ -86,11 +84,6 @@ app.use("/api/chats", chatRoute);
 
 //port
 const port = process.env.port || 8080;
-
-//listener
-// const server = app.listen(port, () =>
-//   console.log(`Server is running on port ${ port }`)
-// );
 
 
 /*The cors() function takes an object with two properties: origin and credentials. 
