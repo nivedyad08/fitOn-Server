@@ -35,7 +35,7 @@ trainerRoute.put('/delete-workout', isTrainer, workoutController.deleteWorkout);
 trainerRoute.post('/edit-workout', isTrainer, thumbnailUpload.single('thumbnailImage'), uploadImageToCloudinary, workoutController.editWorkout);
 trainerRoute.post('/upload-basic-workout-video', isTrainer, workoutUpload.fields([
   {
-    name: "vidoes",
+    name: "videos",
     maxCount: 1,
   },
 ]), uploadVideoToCloudinary, workoutController.uploadBasicWorkoutVideo);
