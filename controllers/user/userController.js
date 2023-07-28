@@ -23,41 +23,43 @@ const trainers = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10
 
         trainersList = await User.aggregate([
-            { $match: { isActive: true, role: TRAINER_ROLE } },
+            {
+                $match: { isActive: true, role: TRAINER_ROLE }
+            },
             {
                 $lookup: {
                     from: "workouts",
-                    localField: "_id",
-                    foreignField: "trainerId",
-                    as: "workouts",
+                    let: { trainerId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$trainerId", "$$trainerId"] },
+                                status: true
+                            }
+                        }
+                    ],
+                    as: "workouts"
                 }
             },
             {
-                $unwind: "$workouts"
-            },
-            {
-                $match: { "workouts.status": true }
-            },
-            {
-                $group: {
-                    _id: "$_id",
-                    firstName: { $first: "$firstName" },
-                    lastName: { $first: "$lastName" },
-                    firstName: { $first: "$firstName" },
-                    profilePic: { $first: "$profilePic" },
-                    isActive: { $first: "$isActive" },
-                    coverPhoto: { $first: "$coverPhoto" },
-                    userBio: { $first: "$userBio" },
-                    userLocation: { $first: "$userLocation" },
-                    createdAt: { $first: "$createdAt" },
-                    email: { $first: "$email" },
-                    workouts: { $push: "$workouts" }
+                $project: {
+                    _id: 1,
+                    firstName: 1,
+                    lastName: 1,
+                    profilePic: 1,
+                    isActive: 1,
+                    coverPhoto: 1,
+                    userBio: 1,
+                    userLocation: 1,
+                    createdAt: 1,
+                    email: 1,
+                    workouts: 1
                 }
             },
             { $sort: { createdAt: -1 } },
             { $skip: (page - 1) * limit },
             { $limit: limit }
-        ])
+        ]);
         const totalTrainersCount = await User.find({ role: TRAINER_ROLE }).count()
         return res.status(200).json({ trainers: trainersList, totalTrainersCount: totalTrainersCount });
     } catch (error) {
