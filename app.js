@@ -24,7 +24,17 @@ require("./config/database").connectDb();
 
 //middleware
 app.use(morgan("dev"));
-app.use(cors());
+
+const allowedOrigins = ['https://fitonhub.netlify.app'];
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true, // Allow including cookies in cross-origin requests
+};
+
+app.use(cors(corsOptions));
+
+// app.use(cors());
 
 //routes
 const authRoute = require("./routes/authRoutes");
@@ -37,7 +47,7 @@ const server = app.listen(3000, () => {
   console.log(`Server is running on port 3000.`);
 });
 
-const io = require('socket.io')(server, {cors: true})
+const io = require('socket.io')(server, { cors: true })
 
 io.on("connection", (socket) => {
   console.log("connected to socket.io");
