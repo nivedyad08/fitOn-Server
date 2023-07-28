@@ -15,31 +15,34 @@ const register = async (req, res) => {
   try {
     if (firstName && lastName && email && password && role && userLocation) {
       const isUser = await User.findOne({ email: email });
-      if (isUser) {
+      console.log(778787);
+      if (isUser && isUser?.isActive) {
         return res.status(400).json({ message: "User already exists !!" });
-      } else {
-        const otp = Math.floor(Math.random() * 9000 + 1000);
-        const newUser = User({
-          firstName,
-          lastName,
-          email,
-          role,
-          password: await bcrypt.hash(password, 10),
-          userLocation,
-          verificationCode: otp,
-          isActive: false
-        });
-        const resUser = await newUser.save();
-        if (resUser) {
-          const message = `<p>Hey ${ resUser.firstName } ${ resUser.lastName },<br/> Please enter the following code on the page where you requested for an OTP.</p><br/><button type="button" class="mt-20 py-20 px-20 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-400 border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">${ otp }</button>`;
+      } else if (isUser?.isActive === false) {
+        await User.deleteOne({ _id: isUser._id });
+      }
+      console.log(999);
+      const otp = Math.floor(Math.random() * 9000 + 1000);
+      const newUser = User({
+        firstName,
+        lastName,
+        email,
+        role,
+        password: await bcrypt.hash(password, 10),
+        userLocation,
+        verificationCode: otp,
+        isActive: false
+      });
+      const resUser = await newUser.save();
+      if (resUser) {
+        const message = `<p>Hey ${ resUser.firstName } ${ resUser.lastName },<br/> Please enter the following code on the page where you requested for an OTP.</p><br/><button type="button" class="mt-20 py-20 px-20 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-400 border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">${ otp }</button>`;
 
-          const subject = "Email Verification"
+        const subject = "Email Verification"
 
-          sendEmailVerification(resUser.firstName, resUser.lastName, email, message)
-          return res
-            .status(200)
-            .json({ message: "Registered Successfully", user: resUser });
-        }
+        sendEmailVerification(resUser.firstName, resUser.lastName, email, message)
+        return res
+          .status(200)
+          .json({ message: "Registered Successfully", user: resUser });
       }
     } else {
       return res.status(400).json({ message: "All fields are required !!" });
