@@ -32,6 +32,28 @@ const trainers = async (req, res) => {
                     as: "workouts",
                 }
             },
+            {
+                $unwind: "$workouts"
+            },
+            {
+                $match: { "workouts.status": true }
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    firstName: { $first: "$firstName" },
+                    lastName: { $first: "$lastName" },
+                    firstName: { $first: "$firstName" },
+                    profilePic: { $first: "$profilePic" },
+                    isActive: { $first: "$isActive" },
+                    coverPhoto: { $first: "$coverPhoto" },
+                    userBio: { $first: "$userBio" },
+                    userLocation: { $first: "$userLocation" },
+                    createdAt: { $first: "$createdAt" },
+                    email: { $first: "$email" },
+                    workouts: { $push: "$workouts" }
+                }
+            },
             { $sort: { createdAt: -1 } },
             { $skip: (page - 1) * limit },
             { $limit: limit }
@@ -42,6 +64,7 @@ const trainers = async (req, res) => {
         return res.status(400).json({ message: error.message });
     }
 }
+
 
 const packages = async (req, res) => {
     const packages = await Package.find({ status: true })
